@@ -1,65 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Netflix Clone</title>
-    <link rel="icon" type="image/png" href="/assets/pics/Netflix_Symbol_RGB.png">
-    <!-- fonts sans  -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
-        rel="stylesheet">
-    <!-- css link -->
-    <link rel="stylesheet" href="/assets/css/style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Netflix Clone</title>
+  <link rel="stylesheet" href="/assets/css/style.css" />
 </head>
-
 <body>
-    <!-- nav bar section -->
-    <header>
-        <nav class="navbar">
-            <div class="container">
-                <figure class="navbar__logo">
-                    <a href="#">
-                        <img src="/assets/pics/Netflix_Logo_RGB.png" alt="Netflix logo">
-                    </a>
-                </figure>
-            </div>
-        </nav>
-    </header>
-    <!-- hero section -->
-     <section class="hero">
-  <div class="overlay"></div>
-  <div class="container">
-    <div class="signin__content">
-      <h1 class="signin__heading">Unlimited movies, TV shows, and more</h1>
-      <h2 class="signin__title">Sign In</h2>
-      <form class="signin__form">
-        <input type="email" placeholder="Email or phone number" required class="signin__input">
-        <input type="password" placeholder="Password" required class="signin__input">
-        <button type="submit" class="signin__button">Sign In</button>
-        <div class="signin__options">
-          <label><input type="checkbox"> Remember me</label>
-          <a href="#">Need help?</a>
-        </div>
-      </form>
-      <div class="signin__footer">
-        <p>New to Netflix? <a href="#">Sign up now</a>.</p>
-        <small>This page is protected by Google reCAPTCHA to ensure you're not a bot. <a href="#">Learn more.</a></small>
-      </div>
+  <!-- Header -->
+  <header>
+    <div class="navbar__logo">
+      <img src="/assets/pics/Netflix_Logo_RGB.png" alt="Netflix Logo" />
     </div>
+    <div class="navbar__signin">
+      <a href="signin.html">Sign In</a>
+    </div>
+  </header>
+
+  <!-- Main Section -->
+  <section class="signup-hero">
+    <h1>Unlimited movies, TV shows, and more.</h1>
+    <p>Watch anywhere. Cancel anytime.</p>
+
+    <!-- Sign Up Form -->
+    <form class="signup-form" action="#" method="POST">
+      <input type="text" name="firstName" placeholder="First Name" required />
+      <input type="text" name="lastName" placeholder="Last Name" required />
+      <input type="email" name="email" placeholder="Email address" required />
+      <input type="password" name="password" placeholder="Password" required />
+      <input type="password" name="confirmPassword" placeholder="Confirm Password" required />
+      <button type="submit">Sign Up</button>
+    </form>
+  </section>
+
+  <!-- Trending Section -->
+ <section class="trending">
+  <h2>Trending Now</h2>
+  <div class="trending__controls">
+    <button class="slider-btn left">&#10094;</button>
+    <div class="trending__slider"></div>
+    <button class="slider-btn right">&#10095;</button>
   </div>
 </section>
-
-
-
-
-
-
-
-    <script src="assets/js/main.js"></script>
+  <!-- More Reasons to Join Section -->
+  <section class="reasons">
+    <div class="reason">
+      <img src="/assets/pics/connect-netflix-to-tv-pc.webp" alt="TV" />
+      <h3>Enjoy on your TV</h3>
+      <p>Watch on Smart TVs, Playstation, Xbox, Chromecast, Apple TV, and more.</p>
+    </div>
+    <div class="reason">
+      <img src="/assets/pics/download icon.png" alt="Download" />
+      <h3>Download and go</h3>
+      <p>Save your favorites easily and always have something to watch.</p>
+    </div>
+    <div class="reason">
+      <img src="/assets/pics/Netflix devices.webp" alt="Devices" />
+      <h3>Watch everywhere</h3>
+      <p>Stream unlimited movies and TV shows on your phone, tablet, laptop, and TV.</p>
+    </div>
+    <div class="reason">
+      <img src="/assets/pics/kids.jpeg" alt="Kids" />
+      <h3>Create profiles for kids</h3>
+      <p>Send kids on adventures with their favorite characters in a space made just for them—free with your membership.</p>
+    </div>
+  </section>
+  <script type="module" src="assets/js/main.js"></script>
 </body>
-
 </html>

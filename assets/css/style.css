@@ -1,189 +1,210 @@
-/* General styles */
+/* Reset & base */
 * {
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-    font-family: "Poppins", sans-serif;
-   background-image: url('/assets/pics/netflix-image.jpg');
-  background-size: cover;   
-  background-position: center; 
-  background-repeat: no-repeat;
+  font-family: 'Poppins', sans-serif;
+  background: url('/assets/pics/netflix-image.jpg') no-repeat center center/cover;
+  color: white;
+  min-height: 100vh;
 }
 
-.container {
-    width: 80%;
-    margin: 0 auto;
+/* Header */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 80px;
+  background-color: transparent;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 10;
 }
 
-a {
-    text-decoration: none;
-    color: #fff;
+.navbar__logo img {
+  width: 160px;
+  height: auto;
+  display: block;
+  cursor: pointer;
 }
 
-h1 {
-    font-size: 65px;
-    font-weight: 600;
-    line-height: 64px;
-    text-align: center;
+.navbar__signin a {
+  background-color: #e50914;
+  color: white;
+  padding: 12px 30px;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-h2 {
-    font-size: 48px;
-    font-weight: 600;
-    line-height: 64px;
-    text-align: center;
+.navbar__signin a:hover {
+  background-color: #f6121d;
 }
 
-h3 {
-    font-size: 38px;
-    font-weight: 600;
-    line-height: 56px;
-    margin-bottom: 16px;
+/* Main Section - Hero & Sign Up Form */
+.signup-hero {
+  margin-top: 100px; /* to avoid header overlap */
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 40px 20px;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 8px;
 }
 
-h5 {
-    font-size: 16px;
-    font-weight: 500;
-    line-height: 28px;
+.signup-hero h1 {
+  font-size: 2.8rem;
+  font-weight: 700;
+  margin-bottom: 16px;
 }
 
-h6 {
-    font-size: 24px;
-    font-weight: 500;
-    line-height: 36px;
+.signup-hero p {
+  font-size: 1.3rem;
+  color: #e5e5e5;
+  margin-bottom: 30px;
 }
 
-p {
-    font-size: 16px;
-    font-weight: 400;
-    line-height: 28px;
+/* Form styling */
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
-img {
-    width: 100%;
+.signup-form input {
+  padding: 14px 16px;
+  border-radius: 4px;
+  border: none;
+  font-size: 1.1rem;
 }
 
-.header {
-    position: fixed;
-    padding: 20px;
-    width: 100%;
+.signup-form input:focus {
+  outline: none;
+  box-shadow: 0 0 5px #e50914;
 }
 
-.navbar {
-    max-width: 1400px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-}
-.navbar__logo{
-    width: 20%;
-}
-
-
-.hero {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 100px 20px 60px;
+.signup-form button {
+  background-color: #e50914;
+  color: white;
+  padding: 16px 0;
+  font-size: 1.3rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.3s ease;
 }
 
-.overlay {
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
-    z-index: 1;
+.signup-form button:hover {
+  background-color: #f6121d;
 }
 
-.hero .container {
-    position: relative;
-    z-index: 2;
-    max-width: 450px;
-    width: 100%;
+/* Trending Section */
+.trending {
+  padding: 30px 80px;
+  background-color: #141414;
+  margin-top: 60px;
+  max-width: 900px; 
+  margin-left: auto;
+  margin-right: auto;
 }
 
-.signin__content {
-    background-color: rgba(0, 0, 0, 0.75);
-    padding: 60px 68px 40px;
-    border-radius: 4px;
-    color: #fff;
+.trending h2 {
+  font-size: 2rem;
+  margin-bottom: 20px;
 }
 
-.signin__heading {
-    font-size: 50px;
-    font-weight: 700;
-    margin-bottom: 24px;
-    text-align: center;
+.trending__controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-.signin__title {
-    font-size: 24px;
-    font-weight: 700;
-    margin-bottom: 20px;
+.slider-btn {
+  background-color: rgba(229, 9, 20, 0.8);
+  border: none;
+  color: white;
+  font-size: 2rem;
+  padding: 0 15px;
+  cursor: pointer;
+  border-radius: 4px;
+  user-select: none;
+  transition: background-color 0.3s ease;
 }
 
-.signin__form {
-    display: flex;
-    flex-direction: column;
+.slider-btn:hover {
+  background-color: #f6121d;
 }
 
-.signin__input {
-    background: #333;
-    border: none;
-    color: white;
-    padding: 16px;
-    margin-bottom: 16px;
-    font-size: 16px;
-    border-radius: 4px;
+.trending__slider {
+  display: flex;
+  overflow: hidden; 
+  gap: 15px;
+  flex-grow: 1;
 }
 
-.signin__button {
-    background-color: #e50914;
-    color: white;
-    font-size: 16px;
-    font-weight: bold;
-    padding: 16px;
-    margin-top: 8px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+.trending__item {
+  flex: 0 0 auto;
+  width: 180px; 
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.3s ease;
 }
 
-.signin__button:hover {
-    background-color: #f6121d;
+.trending__item img {
+  width: 100%;
+  height: auto;
+  display: block;
 }
 
-.signin__options {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 12px;
-    font-size: 13px;
-    color: #b3b3b3;
+.trending__item:hover {
+  transform: scale(1.05);
 }
 
-.signin__options a {
-    color: #b3b3b3;
+
+
+/* More Reasons to Join Section */
+.reasons {
+  background-color: #000;
+  padding: 60px 80px;
+  display: flex;
+  justify-content: center; 
+  gap: 60px; 
+  color: white;
+  text-align: center;
+  margin-top: 40px;
+  flex-wrap: nowrap;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-.signin__footer {
-    margin-top: 30px;
-    font-size: 14px;
-    color: #737373;
+.reason {
+  flex: 0 0 220px;
 }
 
-.signin__footer a {
-    color: white;
-    text-decoration: none;
+.reason img {
+  max-width: 100px; 
+  margin-bottom: 20px;
 }
 
-.signin__footer a:hover {
-    text-decoration: underline;
+.reason h3 {
+  font-size: 1.5rem;
+  margin-bottom: 12px;
+}
+
+.reason p {
+  font-size: 0.95rem;
+  line-height: 1.4;
+  color: #b3b3b3;
 }
