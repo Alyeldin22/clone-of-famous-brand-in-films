@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Movie Dashboard</title>
+  <link rel="stylesheet" href="/assets/css/style.css" />
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-left">
+      <img src="" alt="Profile Pic" id="profile-pic" class="profile-pic" title="Click to change" />
+      <span id="greeting">Hello, User</span>
+    </div>
+    <div class="navbar-center">
+      <input type="text" id="search-input" placeholder="Search movies..." />
+    </div>
+    <div class="navbar-right">
+      <button id="logout-btn">Logout</button>
+    </div>
+  </nav>
+
+  <main>
+    <section class="movie-details" id="movie-details" hidden>
+      <button id="close-details">&times;</button>
+      <h2 id="detail-title"></h2>
+      <img id="detail-img" src="" alt="Movie Poster" />
+      <p id="detail-desc"></p>
+    </section>
+
+    <section class="slider-container">
+      <button class="slider-btn left">&#10094;</button>
+      <div class="slider" id="slider"></div>
+      <button class="slider-btn right">&#10095;</button>
+    </section>
+  </main>
+
+  <section class="chatbot">
+    <div class="chatbot-header">ChatBot</div>
+    <div class="chatbot-messages" id="chatbot-messages"></div>
+    <input type="text" id="chatbot-input" placeholder="Ask me something..." />
+  </section>
+
+  <input type="file" id="profile-upload" accept="image/*" style="display:none;" />
+
+  <script type="module" src="/assets/js/home.js"></script>
+  <script type="module" src="/assets/js/main.js"></script>
+</body>
+</html>
