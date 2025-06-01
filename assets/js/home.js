@@ -13,10 +13,14 @@ const chatForm = document.getElementById('chatForm');
 const chatInput = document.getElementById('chatInput');
 
 const userName = document.getElementById('user-name');
+const GEMINI_API_KEY = "AIzaSyAS0uSxL6yeZO5_1oLH3Rzet7RZQIu5mgQ";
+const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
+const chatHistory = [];
 
 let currentCategory = 'all';
 let currentPeriod = 'day';
 
+// Fetch trending movies
 document.querySelectorAll('nav li[data-category]').forEach(btn => {
   btn.addEventListener('click', () => {
     currentCategory = btn.getAttribute('data-category');
@@ -35,6 +39,7 @@ document.getElementById('logout').addEventListener('click', () => {
   window.location.href = '/index.html'; 
 });
 
+// Close modal
 closeDetail.addEventListener('click', () => {
   detailModal.classList.add('hidden');
   detailContent.innerHTML = '';
@@ -47,7 +52,7 @@ window.addEventListener('click', (e) => {
   }
 });
 
-
+// Open/Close chatbot
 openChatBtn.addEventListener('click', () => {
   chatbot.classList.add('active');
   openChatBtn.style.display = 'none';
@@ -58,8 +63,8 @@ closeChat.addEventListener('click', () => {
   openChatBtn.style.display = 'flex';
 });
 
-
-chatForm.addEventListener('submit', e => {
+// Chat Form Submit
+chatForm.addEventListener('submit', async e => {
   e.preventDefault();
   const userMsg = chatInput.value.trim();
   if (!userMsg) return;
@@ -67,12 +72,9 @@ chatForm.addEventListener('submit', e => {
   appendMessage(userMsg, 'user');
   chatInput.value = '';
 
-
-  setTimeout(() => {
-    let botReply = generateBotReply(userMsg);
-    appendMessage(botReply, 'bot');
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-  }, 600);
+  const botReply = await generateResponse(userMsg);
+  appendMessage(botReply, 'bot');
+  chatMessages.scrollTop = chatMessages.scrollHeight;
 });
 
 function appendMessage(text, sender) {
@@ -83,15 +85,45 @@ function appendMessage(text, sender) {
   chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
-function generateBotReply(msg) {
-  msg = msg.toLowerCase();
-  if (msg.includes('hello') || msg.includes('hi')) return 'Hello! How can I assist you with movies or TV shows?';
-  if (msg.includes('recommend')) return 'Sure! Try "Stranger Things" or "The Witcher".';
-  if (msg.includes('bye')) return 'Goodbye! Have a great day!';
-  return "Sorry, I didn't understand that. Try asking for recommendations or trending shows.";
+// Gemini API response
+async function generateResponse(userMessage) {
+  chatHistory.push({
+    role: "user",
+    parts: [{ text: userMessage }]
+  });
+
+  try {
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        contents: chatHistory
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok ' + response.statusText);
+    }
+
+    const data = await response.json();
+    const geminiReply =
+      data.candidates?.[0]?.content?.parts?.[0]?.text?.replace(/\\([^]+)\\*/g, "$1") ||
+      "No response";
+
+    chatHistory.push({
+      role: "model",
+      parts: [{ text: geminiReply }]
+    });
+
+    return geminiReply;
+
+  } catch (error) {
+    console.error("Error generating response:", error);
+    return "Sorry, there was an error.";
+  }
 }
 
-
+// Fetch Trending from TMDB
 async function fetchTrending(category = 'all', period = 'day') {
   card.innerHTML = `<p style="color:#888; text-align:center; font-size:1.2rem;">Loading...</p>`;
 
@@ -109,25 +141,23 @@ async function fetchTrending(category = 'all', period = 'day') {
   } catch (error) {
     card.innerHTML = `<p style="color:red; text-align:center;">Failed to load data.</p>`;
   }
-  setUserName()
+
+  setUserName();
 }
 
 function setUserName() {
-const user = JSON.parse(localStorage.getItem('currentUser'));
-console.log(user.name);
-
-userName.textContent = user ? user.fullName : 'Guest';
-
-
+  const user = JSON.parse(localStorage.getItem('currentUser'));
+  userName.textContent = user ? user.fullName : 'Guest';
 }
 
-
+// Display movies
 function displayTrending(items) {
   card.innerHTML = '';
   if (!items.length) {
     card.innerHTML = `<p style="color:#888; text-align:center;">No results found.</p>`;
     return;
   }
+
   items.forEach(item => {
     const title = item.title || item.name || 'No title';
     const poster = item.poster_path ? `https://image.tmdb.org/t/p/w300${item.poster_path}` : 'https://via.placeholder.com/300x450?text=No+Image';
@@ -152,6 +182,7 @@ function displayTrending(items) {
   });
 }
 
+// Show movie modal
 function showDetail(item) {
   const title = item.title || item.name || 'No title';
   const overview = item.overview || 'No description available.';
@@ -161,7 +192,6 @@ function showDetail(item) {
     <img src="${poster}" alt="${title}" class="modal-img" />
     <h2>${title}</h2>
     <p>${overview}</p>
-
     <hr style="margin: 20px 0; border-color: #e50914;" />
 
     <div id="commentsSection">
@@ -190,6 +220,7 @@ function showDetail(item) {
   detailModal.classList.remove('hidden');
 }
 
+// Comment system
 function loadComments(movieId) {
   const commentsList = document.getElementById('commentsList');
   commentsList.innerHTML = '';
@@ -221,4 +252,5 @@ function addComment(movieId, commentText) {
   loadComments(movieId);
 }
 
+// Initial load
 fetchTrending();

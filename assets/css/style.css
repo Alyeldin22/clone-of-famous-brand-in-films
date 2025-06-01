@@ -188,20 +188,28 @@ header {
 }
 
 .reason {
-  flex: 0 0 220px;
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 220px;
+  justify-content: center;
+  align-items: center;
 }
 
 .reason img {
-  max-width: 100px;
+  flex: 1 0 auto;
+  width: 170px;
+  height: 150px;
   margin-bottom: 20px;
 }
 
 .reason h3 {
-  font-size: 1.5rem;
+  /* flex: 1 0 auto; */
+  font-size: 1.25rem;
   margin-bottom: 12px;
 }
 
 .reason p {
+  flex: 1 0 auto;
   font-size: 0.95rem;
   line-height: 1.4;
   color: #b3b3b3;
