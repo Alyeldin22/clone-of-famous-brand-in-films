@@ -1,183 +1,158 @@
-const storedUser = JSON.parse(localStorage.getItem("user")) || {
-  name: "User",
-  email: "",
-  profilePic: "",
-};
-const greetingEl = document.getElementById("greeting");
-const profilePicEl = document.getElementById("profile-pic");
-const profileUploadInput = document.getElementById("profile-upload");
-const logoutBtn = document.getElementById("logout-btn");
-const searchInput = document.getElementById("search-input");
+const apiKey = 'bdd10d2b8f52bc0a5320d5c9d88bd1ff'; // مفتاح API صحيح بدون Bearer
 
-const slider = document.getElementById("slider");
-const movieDetails = document.getElementById("movie-details");
-const detailTitle = document.getElementById("detail-title");
-const detailImg = document.getElementById("detail-img");
-const detailDesc = document.getElementById("detail-desc");
-const closeDetailsBtn = document.getElementById("close-details");
+const card = document.querySelector('.card');
+const detailModal = document.getElementById('detailModal');
+const detailContent = document.getElementById('detailContent');
+const closeDetail = document.getElementById('closeDetail');
 
-const chatbotMessages = document.getElementById("chatbot-messages");
-const chatbotInput = document.getElementById("chatbot-input");
+const openChatBtn = document.getElementById('openChatBtn');
+const chatbot = document.getElementById('chatbot');
+const closeChat = document.getElementById('closeChat');
+const chatMessages = document.getElementById('chatMessages');
+const chatForm = document.getElementById('chatForm');
+const chatInput = document.getElementById('chatInput');
 
-function updateUserUI() {
-  greetingEl.textContent = `Hello, ${storedUser.name.split(" ")[0]}`;
-  if (storedUser.profilePic) {
-    profilePicEl.src = storedUser.profilePic;
+let currentCategory = 'all';
+let currentPeriod = 'day';
+
+document.querySelectorAll('.controls button[data-category]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    currentCategory = btn.getAttribute('data-category');
+    fetchTrending(currentCategory, currentPeriod);
+  });
+});
+
+document.getElementById('period').addEventListener('change', e => {
+  currentPeriod = e.target.value;
+  fetchTrending(currentCategory, currentPeriod);
+});
+
+document.getElementById('logout').addEventListener('click', () => {
+  localStorage.removeItem('user');
+  alert('Logged out!');
+  window.location.href = '/index.html'; 
+});
+
+closeDetail.addEventListener('click', () => {
+  detailModal.classList.add('hidden');
+  detailContent.innerHTML = '';
+});
+
+window.addEventListener('click', (e) => {
+  if (e.target === detailModal) {
+    detailModal.classList.add('hidden');
+    detailContent.innerHTML = '';
+  }
+});
+
+// Chatbot toggle
+openChatBtn.addEventListener('click', () => {
+  chatbot.classList.add('active');
+  openChatBtn.style.display = 'none';
+});
+
+closeChat.addEventListener('click', () => {
+  chatbot.classList.remove('active');
+  openChatBtn.style.display = 'flex';
+});
+
+// Chatbot messages (بسيط جدا)
+chatForm.addEventListener('submit', e => {
+  e.preventDefault();
+  const userMsg = chatInput.value.trim();
+  if (!userMsg) return;
+
+  appendMessage(userMsg, 'user');
+  chatInput.value = '';
+
+  // Simple bot response
+  setTimeout(() => {
+    let botReply = generateBotReply(userMsg);
+    appendMessage(botReply, 'bot');
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }, 600);
+});
+
+function appendMessage(text, sender) {
+  const msgDiv = document.createElement('div');
+  msgDiv.classList.add('message', sender);
+  msgDiv.textContent = text;
+  chatMessages.appendChild(msgDiv);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function generateBotReply(msg) {
+  msg = msg.toLowerCase();
+  if (msg.includes('hello') || msg.includes('hi')) return 'Hello! How can I assist you with movies or TV shows?';
+  if (msg.includes('recommend')) return 'Sure! Try "Stranger Things" or "The Witcher".';
+  if (msg.includes('bye')) return 'Goodbye! Have a great day!';
+  return "Sorry, I didn't understand that. Try asking for recommendations or trending shows.";
+}
+
+// Fetch trending
+async function fetchTrending(category = 'all', period = 'day') {
+  card.innerHTML = `<p style="color:#888; text-align:center; font-size:1.2rem;">Loading...</p>`;
+
+  let url = '';
+  if (category === 'all') {
+    url = `https://api.themoviedb.org/3/trending/all/${period}?api_key=${apiKey}`;
   } else {
-    profilePicEl.src = "https://via.placeholder.com/40?text=U";
+    url = `https://api.themoviedb.org/3/trending/${category}/${period}?api_key=${apiKey}`;
+  }
+
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    displayTrending(data.results);
+  } catch (error) {
+    card.innerHTML = `<p style="color:red; text-align:center;">Failed to load data.</p>`;
   }
 }
-updateUserUI();
 
-
-profilePicEl.addEventListener("click", () => {
-  profileUploadInput.click();
-});
-
-profileUploadInput.addEventListener("change", (e) => {
-  const file = e.target.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = function (evt) {
-      storedUser.profilePic = evt.target.result;
-      localStorage.setItem("user", JSON.stringify(storedUser));
-      updateUserUI();
-    };
-    reader.readAsDataURL(file);
+// عرض البطاقات
+function displayTrending(items) {
+  card.innerHTML = '';
+  if (!items.length) {
+    card.innerHTML = `<p style="color:#888; text-align:center;">No results found.</p>`;
+    return;
   }
-});
+  items.forEach(item => {
+    const title = item.title || item.name || 'No title';
+    const poster = item.poster_path ? `https://image.tmdb.org/t/p/w300${item.poster_path}` : 'https://via.placeholder.com/300x450?text=No+Image';
 
+    const div = document.createElement('div');
+    div.classList.add('card-item');
+    div.innerHTML = `
+      <div class="card__img">
+        <img src="${poster}" alt="${title}" />
+      </div>
+      <div class="card__text">
+        <h3 class="card__title">${title}</h3>
+        <p class="card__description">${(item.overview || '').slice(0, 100)}...</p>
+      </div>
+    `;
 
-logoutBtn.addEventListener("click", () => {
-  localStorage.removeItem("user");
-  window.location.href = "signin.html"; 
-});
-
-
-let moviesList = [];
-let filteredMovies = []; 
-
-function getMovies(key = "movie", filter = "day") {
-  fetch(`https://api.themoviedb.org/3/trending/${key}/${filter}?language=en-US`, {
-    headers: {
-      Authorization:
-        "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJiZGQxMGQyYjhmNTJiYzBhNTMyMGQ1YzlkODhiZDFmZiIsIm5iZiI6MTU5Mjc1NTkwMS44MjgsInN1YiI6IjVlZWY4NmJkZWQyYWMyMDAzNTlkNGM4NiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.NT77KLEZLjsgTMnyjJQBWADPa_t_7ydLLbvEABTxbwM",
-    },
-  })
-    .then((res) => {
-      if (!res.ok) throw new Error("Network response error");
-      return res.json();
-    })
-    .then((data) => {
-      moviesList = data.results;
-      filteredMovies = moviesList; 
-      renderSlider(filteredMovies);
-    })
-    .catch((error) => {
-      console.error("Fetch error:", error);
-    });
-}
-
-function renderSlider(movies) {
-  slider.innerHTML = "";
-  movies.forEach((movie) => {
-    const itemDiv = document.createElement("div");
-    itemDiv.classList.add("movie-card");
-
-    const img = document.createElement("img");
-    img.src = movie.poster_path
-      ? `https://image.tmdb.org/t/p/w300${movie.poster_path}`
-      : "fallback-image.jpg";
-    img.alt = movie.title || movie.name;
-
-    itemDiv.appendChild(img);
-
-    itemDiv.addEventListener("click", () => {
-      showMovieDetails(movie);
+    div.addEventListener('click', () => {
+      showDetail(item);
     });
 
-    slider.appendChild(itemDiv);
+    card.appendChild(div);
   });
 }
 
-function showMovieDetails(movie) {
-  detailTitle.textContent = movie.title || movie.name;
-  detailDesc.textContent = movie.overview || "No description available.";
-  detailImg.src = movie.poster_path
-    ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
-    : "fallback-image.jpg";
+// تفاصيل الفيلم في المودال
+function showDetail(item) {
+  const title = item.title || item.name || 'No title';
+  const overview = item.overview || 'No description available.';
+  const poster = item.poster_path ? `https://image.tmdb.org/t/p/original${item.poster_path}` : 'https://via.placeholder.com/900x600?text=No+Image';
 
-  movieDetails.hidden = false;
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  detailContent.innerHTML = `
+    <img src="${poster}" alt="${title}" />
+    <h2>${title}</h2>
+    <p>${overview}</p>
+  `;
+  detailModal.classList.remove('hidden');
 }
 
-closeDetailsBtn.addEventListener("click", () => {
-  movieDetails.hidden = true;
-});
-
-const btnLeft = document.querySelector(".slider-btn.left");
-const btnRight = document.querySelector(".slider-btn.right");
-
-btnLeft.addEventListener("click", () => {
-  slider.scrollBy({ left: -300, behavior: "smooth" });
-});
-btnRight.addEventListener("click", () => {
-  slider.scrollBy({ left: 300, behavior: "smooth" });
-});
-
-// البحث
-searchInput.addEventListener("input", () => {
-  const query = searchInput.value.trim().toLowerCase();
-  if (query === "") {
-    filteredMovies = moviesList;
-  } else {
-    filteredMovies = moviesList.filter((movie) => {
-      const title = (movie.title || movie.name || "").toLowerCase();
-      return title.includes(query);
-    });
-  }
-  renderSlider(filteredMovies);
-});
-
-// --- شات بوت بسيط ---
-
-const botReplies = {
-  hello: "Hello! How can I help you today?",
-  hi: "Hi there! What can I do for you?",
-  help: "You can search for movies, click on a movie to see details, or ask me questions.",
-  bye: "Goodbye! Have a nice day!",
-};
-
-function botResponse(message) {
-  message = message.toLowerCase();
-
-  for (const key in botReplies) {
-    if (message.includes(key)) {
-      return botReplies[key];
-    }
-  }
-  return "Sorry, I didn't understand that. Try asking about movies.";
-}
-
-chatbotInput.addEventListener("keydown", (e) => {
-  if (e.key === "Enter" && chatbotInput.value.trim() !== "") {
-    const userMsg = chatbotInput.value.trim();
-    addChatMessage(userMsg, "user");
-    chatbotInput.value = "";
-
-    setTimeout(() => {
-      const reply = botResponse(userMsg);
-      addChatMessage(reply, "bot");
-    }, 700);
-  }
-});
-
-function addChatMessage(msg, sender) {
-  const msgDiv = document.createElement("div");
-  msgDiv.textContent = msg;
-  msgDiv.classList.add(sender);
-  chatbotMessages.appendChild(msgDiv);
-  chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
-}
-
-getMovies();
+// البداية
+fetchTrending();

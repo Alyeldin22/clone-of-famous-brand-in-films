@@ -3,47 +3,49 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Movie Dashboard</title>
-  <link rel="stylesheet" href="/assets/css/style.css" />
+  <title>Trending Media - Netflix Style</title>
+  <link rel="stylesheet" href="/assets/css/main.css" />
 </head>
 <body>
-  <nav class="navbar">
-    <div class="navbar-left">
-      <img src="" alt="Profile Pic" id="profile-pic" class="profile-pic" title="Click to change" />
-      <span id="greeting">Hello, User</span>
+  <header>
+    <h1>Trending Media</h1>
+    <div class="controls">
+      <button id="all" data-category="all">All</button>
+      <button id="movies" data-category="movie">Movies</button>
+      <button id="tv" data-category="tv">TV</button>
+      <button id="people" data-category="person">People</button>
+      <select id="period">
+        <option value="day">Day</option>
+        <option value="week">Week</option>
+      </select>
+      <button id="logout">Logout</button>
     </div>
-    <div class="navbar-center">
-      <input type="text" id="search-input" placeholder="Search movies..." />
-    </div>
-    <div class="navbar-right">
-      <button id="logout-btn">Logout</button>
-    </div>
-  </nav>
+  </header>
 
   <main>
-    <section class="movie-details" id="movie-details" hidden>
-      <button id="close-details">&times;</button>
-      <h2 id="detail-title"></h2>
-      <img id="detail-img" src="" alt="Movie Poster" />
-      <p id="detail-desc"></p>
-    </section>
-
-    <section class="slider-container">
-      <button class="slider-btn left">&#10094;</button>
-      <div class="slider" id="slider"></div>
-      <button class="slider-btn right">&#10095;</button>
-    </section>
+    <div class="card"></div>
   </main>
 
-  <section class="chatbot">
-    <div class="chatbot-header">ChatBot</div>
-    <div class="chatbot-messages" id="chatbot-messages"></div>
-    <input type="text" id="chatbot-input" placeholder="Ask me something..." />
-  </section>
+  <!-- تفاصيل الفيلم - مودال -->
+  <div id="detailModal" class="modal hidden">
+    <div class="modal-content">
+      <span id="closeDetail" class="close">&times;</span>
+      <div id="detailContent"></div>
+    </div>
+  </div>
 
-  <input type="file" id="profile-upload" accept="image/*" style="display:none;" />
+  <!-- شات بوت -->
+  <div id="chatbot">
+    <div id="chatHeader">Chatbot <button id="closeChat">×</button></div>
+    <div id="chatMessages"></div>
+    <form id="chatForm">
+      <input type="text" id="chatInput" placeholder="Ask me anything..." autocomplete="off" />
+      <button type="submit">Send</button>
+    </form>
+  </div>
 
-  <script type="module" src="/assets/js/home.js"></script>
-  <script type="module" src="/assets/js/main.js"></script>
+  <button id="openChatBtn" title="Open Chatbot">💬</button>
+
+  <script src="./assets/js/home.js"></script>
 </body>
 </html>
