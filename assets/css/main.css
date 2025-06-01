@@ -111,7 +111,7 @@ header h1 {
   text-overflow: ellipsis;
 }
 
-/* Modal - تفاصيل الفيلم */
+
 .modal {
   position: fixed;
   top: 0;
@@ -280,7 +280,7 @@ header h1 {
   background: #b81d24;
 }
 
-/* زر فتح الشات */
+
 #openChatBtn {
   position: fixed;
   bottom: 20px;

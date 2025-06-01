@@ -140,7 +140,7 @@ function displayTrending(items) {
   });
 }
 
-
+// تعديل showDetail ليضيف قسم التعليقات والفيدباك
 function showDetail(item) {
   const title = item.title || item.name || 'No title';
   const overview = item.overview || 'No description available.';
@@ -150,9 +150,64 @@ function showDetail(item) {
     <img src="${poster}" alt="${title}" />
     <h2>${title}</h2>
     <p>${overview}</p>
+
+    <hr style="margin: 20px 0; border-color: #e50914;" />
+
+    <div id="commentsSection">
+      <h3>Comments & Feedback</h3>
+      <div id="commentsList" style="max-height: 200px; overflow-y: auto; margin-bottom: 15px; color: #ccc; border: 1px solid #444; padding: 10px; border-radius: 8px;"></div>
+      <form id="commentForm">
+        <textarea id="commentInput" placeholder="Write your comment here..." rows="3" style="width: 100%; padding: 8px; border-radius: 5px; border: none; resize: vertical;"></textarea>
+        <button type="submit" style="margin-top: 10px; padding: 10px 20px; background-color: #e50914; border: none; color: white; border-radius: 5px; cursor: pointer;">Add Comment</button>
+      </form>
+    </div>
   `;
+
+  loadComments(item.id);
+
+  const commentForm = document.getElementById('commentForm');
+  commentForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const commentInput = document.getElementById('commentInput');
+    const commentText = commentInput.value.trim();
+    if (!commentText) return;
+
+    addComment(item.id, commentText);
+    commentInput.value = '';
+  });
+
   detailModal.classList.remove('hidden');
 }
 
+function loadComments(movieId) {
+  const commentsList = document.getElementById('commentsList');
+  commentsList.innerHTML = '';
+
+  const commentsKey = `comments_${movieId}`;
+  const comments = JSON.parse(localStorage.getItem(commentsKey)) || [];
+
+  if (comments.length === 0) {
+    commentsList.innerHTML = '<p>No comments yet. Be the first to comment!</p>';
+    return;
+  }
+
+  comments.forEach(c => {
+    const p = document.createElement('p');
+    p.textContent = c;
+    p.style.padding = '6px 0';
+    p.style.borderBottom = '1px solid #444';
+    commentsList.appendChild(p);
+  });
+}
+
+function addComment(movieId, commentText) {
+  const commentsKey = `comments_${movieId}`;
+  const comments = JSON.parse(localStorage.getItem(commentsKey)) || [];
+
+  comments.push(commentText);
+  localStorage.setItem(commentsKey, JSON.stringify(comments));
+
+  loadComments(movieId);
+}
 
 fetchTrending();
