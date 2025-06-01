@@ -1,4 +1,4 @@
-const apiKey = 'bdd10d2b8f52bc0a5320d5c9d88bd1ff'; // مفتاح API صحيح بدون Bearer
+const apiKey = 'bdd10d2b8f52bc0a5320d5c9d88bd1ff'; 
 
 const card = document.querySelector('.card');
 const detailModal = document.getElementById('detailModal');
@@ -45,7 +45,7 @@ window.addEventListener('click', (e) => {
   }
 });
 
-// Chatbot toggle
+
 openChatBtn.addEventListener('click', () => {
   chatbot.classList.add('active');
   openChatBtn.style.display = 'none';
@@ -56,7 +56,7 @@ closeChat.addEventListener('click', () => {
   openChatBtn.style.display = 'flex';
 });
 
-// Chatbot messages (بسيط جدا)
+
 chatForm.addEventListener('submit', e => {
   e.preventDefault();
   const userMsg = chatInput.value.trim();
@@ -65,7 +65,7 @@ chatForm.addEventListener('submit', e => {
   appendMessage(userMsg, 'user');
   chatInput.value = '';
 
-  // Simple bot response
+
   setTimeout(() => {
     let botReply = generateBotReply(userMsg);
     appendMessage(botReply, 'bot');
@@ -89,7 +89,7 @@ function generateBotReply(msg) {
   return "Sorry, I didn't understand that. Try asking for recommendations or trending shows.";
 }
 
-// Fetch trending
+
 async function fetchTrending(category = 'all', period = 'day') {
   card.innerHTML = `<p style="color:#888; text-align:center; font-size:1.2rem;">Loading...</p>`;
 
@@ -109,7 +109,7 @@ async function fetchTrending(category = 'all', period = 'day') {
   }
 }
 
-// عرض البطاقات
+
 function displayTrending(items) {
   card.innerHTML = '';
   if (!items.length) {
@@ -140,7 +140,7 @@ function displayTrending(items) {
   });
 }
 
-// تفاصيل الفيلم في المودال
+
 function showDetail(item) {
   const title = item.title || item.name || 'No title';
   const overview = item.overview || 'No description available.';
@@ -154,5 +154,5 @@ function showDetail(item) {
   detailModal.classList.remove('hidden');
 }
 
-// البداية
+
 fetchTrending();
