@@ -31,7 +31,7 @@ if (signupForm && window.location.pathname.includes("index.html")) {
       alert("This email is already registered.");
       return;
     }
-
+    setIntoLocalStorageHandel("currentUser",user)
     // Add new user and save
     users.push(user);
     localStorage.setItem("netflixUsers", JSON.stringify(users));
@@ -138,3 +138,7 @@ window.onload = () => {
     });
   });
 };
+
+function setIntoLocalStorageHandel(key,value){
+  localStorage.setItem(key , JSON.stringify(value))
+}

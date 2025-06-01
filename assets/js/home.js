@@ -12,10 +12,12 @@ const chatMessages = document.getElementById('chatMessages');
 const chatForm = document.getElementById('chatForm');
 const chatInput = document.getElementById('chatInput');
 
+const userName = document.getElementById('user-name');
+
 let currentCategory = 'all';
 let currentPeriod = 'day';
 
-document.querySelectorAll('.controls button[data-category]').forEach(btn => {
+document.querySelectorAll('nav li[data-category]').forEach(btn => {
   btn.addEventListener('click', () => {
     currentCategory = btn.getAttribute('data-category');
     fetchTrending(currentCategory, currentPeriod);
@@ -107,6 +109,16 @@ async function fetchTrending(category = 'all', period = 'day') {
   } catch (error) {
     card.innerHTML = `<p style="color:red; text-align:center;">Failed to load data.</p>`;
   }
+  setUserName()
+}
+
+function setUserName() {
+const user = JSON.parse(localStorage.getItem('currentUser'));
+console.log(user.name);
+
+userName.textContent = user ? user.fullName : 'Guest';
+
+
 }
 
 
@@ -140,14 +152,13 @@ function displayTrending(items) {
   });
 }
 
-// تعديل showDetail ليضيف قسم التعليقات والفيدباك
 function showDetail(item) {
   const title = item.title || item.name || 'No title';
   const overview = item.overview || 'No description available.';
   const poster = item.poster_path ? `https://image.tmdb.org/t/p/original${item.poster_path}` : 'https://via.placeholder.com/900x600?text=No+Image';
 
   detailContent.innerHTML = `
-    <img src="${poster}" alt="${title}" />
+    <img src="${poster}" alt="${title}" class="modal-img" />
     <h2>${title}</h2>
     <p>${overview}</p>
 
