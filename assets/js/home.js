@@ -35,8 +35,9 @@ document.getElementById('period').addEventListener('change', e => {
 });
 
 document.getElementById('logout').addEventListener('click', () => {
+  localStorage.removeItem('currentUser');
   alert('Logged out!');
-  window.location.href = '/index.html';
+  window.location.href = '/index.html'; 
 });
 
 // Close modal
@@ -114,6 +115,7 @@ async function generateResponse(userMessage) {
     });
 
     return geminiReply;
+
   } catch (error) {
     console.error("Error generating response:", error);
     return "Sorry, there was an error.";
@@ -139,8 +141,12 @@ async function fetchTrending(category = 'all', period = 'day') {
     card.innerHTML = `<p style="color:red; text-align:center;">Failed to load data.</p>`;
   }
 
-  // Always show "Guest" since no localStorage
-  if (userName) userName.textContent = 'Guest';
+  setUserName();
+}
+
+function setUserName() {
+  const user = JSON.parse(localStorage.getItem('currentUser'));
+  userName.textContent = user ? user.fullName : 'Guest';
 }
 
 // Display movies
@@ -217,7 +223,7 @@ function showDetail(item) {
   detailModal.classList.remove('hidden');
 }
 
-// Load comments from JSON Server
+// Comment system
 async function loadComments(movieId) {
   const commentsList = document.getElementById('commentsList');
   commentsList.innerHTML = '';
@@ -243,7 +249,6 @@ async function loadComments(movieId) {
   }
 }
 
-// Add comment to JSON Server
 async function addComment(movieId, commentText) {
   try {
     const newComment = { movieId, text: commentText };
