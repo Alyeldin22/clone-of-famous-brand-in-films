@@ -1,0 +1,17 @@
+{
+  "users": [],
+
+  "comments": [
+    {
+      "id": 1,
+      "movieId": 550,
+      "text": "Awesome movie!"
+    },
+    {
+      "id": 2,
+      "movieId": 299534,
+      "text": "Loved the visuals!"
+    }
+  ]
+}
+

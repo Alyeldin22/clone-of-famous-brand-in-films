@@ -1,4 +1,5 @@
-const apiKey = 'bdd10d2b8f52bc0a5320d5c9d88bd1ff'; 
+const apiKey = 'bdd10d2b8f52bc0a5320d5c9d88bd1ff';
+const COMMENTS_API = 'http://localhost:3000/comments';
 
 const card = document.querySelector('.card');
 const detailModal = document.getElementById('detailModal');
@@ -34,9 +35,8 @@ document.getElementById('period').addEventListener('change', e => {
 });
 
 document.getElementById('logout').addEventListener('click', () => {
-  localStorage.removeItem('user');
   alert('Logged out!');
-  window.location.href = '/index.html'; 
+  window.location.href = '/index.html';
 });
 
 // Close modal
@@ -96,9 +96,7 @@ async function generateResponse(userMessage) {
     const response = await fetch(API_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: chatHistory
-      })
+      body: JSON.stringify({ contents: chatHistory })
     });
 
     if (!response.ok) {
@@ -116,7 +114,6 @@ async function generateResponse(userMessage) {
     });
 
     return geminiReply;
-
   } catch (error) {
     console.error("Error generating response:", error);
     return "Sorry, there was an error.";
@@ -142,12 +139,8 @@ async function fetchTrending(category = 'all', period = 'day') {
     card.innerHTML = `<p style="color:red; text-align:center;">Failed to load data.</p>`;
   }
 
-  setUserName();
-}
-
-function setUserName() {
-  const user = JSON.parse(localStorage.getItem('currentUser'));
-  userName.textContent = user ? user.fullName : 'Guest';
+  // Always show "Guest" since no localStorage
+  if (userName) userName.textContent = 'Guest';
 }
 
 // Display movies
@@ -160,7 +153,9 @@ function displayTrending(items) {
 
   items.forEach(item => {
     const title = item.title || item.name || 'No title';
-    const poster = item.poster_path ? `https://image.tmdb.org/t/p/w300${item.poster_path}` : 'https://via.placeholder.com/300x450?text=No+Image';
+    const poster = item.poster_path
+      ? `https://image.tmdb.org/t/p/w300${item.poster_path}`
+      : 'https://via.placeholder.com/300x450?text=No+Image';
 
     const div = document.createElement('div');
     div.classList.add('card-item');
@@ -186,7 +181,9 @@ function displayTrending(items) {
 function showDetail(item) {
   const title = item.title || item.name || 'No title';
   const overview = item.overview || 'No description available.';
-  const poster = item.poster_path ? `https://image.tmdb.org/t/p/original${item.poster_path}` : 'https://via.placeholder.com/900x600?text=No+Image';
+  const poster = item.poster_path
+    ? `https://image.tmdb.org/t/p/original${item.poster_path}`
+    : 'https://via.placeholder.com/900x600?text=No+Image';
 
   detailContent.innerHTML = `
     <img src="${poster}" alt="${title}" class="modal-img" />
@@ -207,49 +204,60 @@ function showDetail(item) {
   loadComments(item.id);
 
   const commentForm = document.getElementById('commentForm');
-  commentForm.addEventListener('submit', (e) => {
+  commentForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const commentInput = document.getElementById('commentInput');
     const commentText = commentInput.value.trim();
     if (!commentText) return;
 
-    addComment(item.id, commentText);
+    await addComment(item.id, commentText);
     commentInput.value = '';
   });
 
   detailModal.classList.remove('hidden');
 }
 
-// Comment system
-function loadComments(movieId) {
+// Load comments from JSON Server
+async function loadComments(movieId) {
   const commentsList = document.getElementById('commentsList');
   commentsList.innerHTML = '';
 
-  const commentsKey = `comments_${movieId}`;
-  const comments = JSON.parse(localStorage.getItem(commentsKey)) || [];
+  try {
+    const res = await fetch(`${COMMENTS_API}?movieId=${movieId}`);
+    const comments = await res.json();
 
-  if (comments.length === 0) {
-    commentsList.innerHTML = '<p>No comments yet. Be the first to comment!</p>';
-    return;
+    if (comments.length === 0) {
+      commentsList.innerHTML = '<p>No comments yet. Be the first to comment!</p>';
+      return;
+    }
+
+    comments.forEach(c => {
+      const p = document.createElement('p');
+      p.textContent = c.text;
+      p.style.padding = '6px 0';
+      p.style.borderBottom = '1px solid #444';
+      commentsList.appendChild(p);
+    });
+  } catch {
+    commentsList.innerHTML = '<p style="color:red;">Failed to load comments.</p>';
   }
-
-  comments.forEach(c => {
-    const p = document.createElement('p');
-    p.textContent = c;
-    p.style.padding = '6px 0';
-    p.style.borderBottom = '1px solid #444';
-    commentsList.appendChild(p);
-  });
 }
 
-function addComment(movieId, commentText) {
-  const commentsKey = `comments_${movieId}`;
-  const comments = JSON.parse(localStorage.getItem(commentsKey)) || [];
+// Add comment to JSON Server
+async function addComment(movieId, commentText) {
+  try {
+    const newComment = { movieId, text: commentText };
+    const res = await fetch(COMMENTS_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newComment),
+    });
 
-  comments.push(commentText);
-  localStorage.setItem(commentsKey, JSON.stringify(comments));
-
-  loadComments(movieId);
+    if (!res.ok) throw new Error('Failed to add comment');
+    loadComments(movieId);
+  } catch {
+    alert("Could not add comment. Try again.");
+  }
 }
 
 // Initial load

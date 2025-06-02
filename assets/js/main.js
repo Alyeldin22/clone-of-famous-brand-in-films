@@ -1,8 +1,8 @@
-// ========== SIGN UP ========== //
 const signupForm = document.querySelector(".signup-form");
+const API_URL = "http://localhost:3000/users";
 
 if (signupForm && window.location.pathname.includes("index.html")) {
-  signupForm.addEventListener("submit", (e) => {
+  signupForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const firstName = signupForm.firstName.value.trim();
@@ -22,48 +22,64 @@ if (signupForm && window.location.pathname.includes("index.html")) {
       password,
     };
 
-    // Get existing users
-    const users = JSON.parse(localStorage.getItem("netflixUsers")) || [];
+    try {
+      // Check if user exists
+      const res = await fetch(`${API_URL}?email=${encodeURIComponent(email)}`);
+      const existingUsers = await res.json();
 
-    // Check if email already exists
-    const exists = users.some((u) => u.email === email);
-    if (exists) {
-      alert("This email is already registered.");
-      return;
+      if (existingUsers.length > 0) {
+        alert("This email is already registered.");
+        return;
+      }
+
+      // Register new user
+      const createRes = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(user),
+      });
+
+      if (!createRes.ok) throw new Error("Failed to register user");
+
+      setIntoLocalStorageHandel("currentUser", user);
+
+      alert("Sign up successful! Please sign in.");
+      window.location.href = "signin.html";
+    } catch (error) {
+      console.error("Error:", error);
+      alert("An error occurred. Please try again.");
     }
-    setIntoLocalStorageHandel("currentUser",user)
-    // Add new user and save
-    users.push(user);
-    localStorage.setItem("netflixUsers", JSON.stringify(users));
-
-    alert("Sign up successful! Please sign in.");
-    window.location.href = "signin.html";
   });
 }
 
-// ========== SIGN IN ========== //
 if (signupForm && window.location.pathname.includes("signin.html")) {
-  signupForm.addEventListener("submit", (e) => {
+  signupForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const email = signupForm.email.value.trim();
     const password = signupForm.password.value;
 
-    const users = JSON.parse(localStorage.getItem("netflixUsers")) || [];
+    try {
+      const res = await fetch(
+        `${API_URL}?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
+      );
+      const users = await res.json();
 
-    const user = users.find((u) => u.email === email && u.password === password);
-
-    if (user) {
-      alert(`Welcome back, ${user.fullName}!`);
-      // Redirect to home.html after sign in
-      window.location.href = "home.html";
-    } else {
-      alert("Invalid email or password.");
+      if (users.length > 0) {
+        const user = users[0];
+        alert(`Welcome back, ${user.fullName}!`);
+        setIntoLocalStorageHandel("currentUser", user);
+        window.location.href = "home.html";
+      } else {
+        alert("Invalid email or password.");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("An error occurred. Please try again.");
     }
   });
 }
 
-// ========== MOVIES FETCHING (HOME PAGE) ========== //
 function getMovies(key = "movie", filter = "day") {
   fetch(`https://api.themoviedb.org/3/trending/${key}/${filter}?language=en-US`, {
     headers: {
@@ -100,7 +116,6 @@ function getMovies(key = "movie", filter = "day") {
     });
 }
 
-// ========== SLIDER CONTROL ========== //
 window.onload = () => {
   getMovies("movie", "day");
 
@@ -139,6 +154,6 @@ window.onload = () => {
   });
 };
 
-function setIntoLocalStorageHandel(key,value){
-  localStorage.setItem(key , JSON.stringify(value))
+function setIntoLocalStorageHandel(key, value) {
+  localStorage.setItem(key, JSON.stringify(value));
 }
