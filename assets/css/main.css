@@ -26,51 +26,109 @@ header h1 {
   color: #e50914; /* Netflix Red */
   margin-bottom: 20px;
 }
-nav{
+nav.navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px;
+  background-color: #141414;
+  padding: 10px 30px;
+  color: white;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
-.logo img{
-  width: 100px;
-}
-nav ul{
+
+/* Left side: logo + links + search */
+.left-side {
   display: flex;
-  gap:25px;
-  list-style: none;
+  align-items: center;
+  gap: 30px;
 }
-nav ul li {
+
+.logo img {
+  width: 100px;
   cursor: pointer;
 }
-/* Controls */
 
-nav li,
-nav select {
-  padding: 10px ;
-  background-color: #333;
-  border: none;
-  color: #fff;
-  font-weight: 600;
+.nav-links {
+  display: flex;
+  list-style: none;
+  gap: 15px;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-links li {
+  padding: 8px 15px;
+  background-color: #222;
   border-radius: 5px;
   cursor: pointer;
-  outline: none;
-  transition: background-color 0.25s ease;
+  font-weight: 600;
+  color: white;
+  border: none;
+  transition: background-color 0.3s ease;
 }
 
-nav li:hover,
-nav select:hover {
+.nav-links li:hover {
   background-color: #e50914;
+}
+
+/* Style for the select inside nav */
+.nav-links select {
+  padding: 8px 10px;
+  border-radius: 5px;
+  border: none;
+  background-color: #222;
   color: white;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.nav-links select:hover {
+  background-color: #e50914;
+}
+
+/* Search input inside the nav */
+#searchInput {
+  padding: 7px 12px;
+  border-radius: 5px;
+  border: none;
+  background-color: #333;
+  color: white;
+  outline: none;
+  font-size: 1rem;
+  width: 160px;
+}
+
+/* Right side: logout */
+.right-side {
+  display: flex;
+  align-items: center;
 }
 
 #logout {
   background-color: #b81d24;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  color: white;
 }
 
 #logout:hover {
   background-color: #f40612;
 }
+
+/* User greeting */
+.user {
+  margin-left: 20px;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+
 
 /* Cards Grid */
 .card {
@@ -328,5 +386,63 @@ nav select:hover {
 }
 
 #openChatBtn:hover {
+  background-color: #b81d24;
+}
+.hover-preview {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 350px;
+  background-color: rgba(20, 20, 20, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 10px 30px;
+  box-shadow: 0 0 30px #e50914;
+  z-index: 20000;
+  transition: opacity 0.3s ease;
+}
+
+.hover-preview.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.hover-preview img {
+  max-height: 100%;
+  border-radius: 10px;
+  max-width: 300px;
+  object-fit: cover;
+}
+
+.hover-info {
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+}
+
+.hover-info h2 {
+  font-size: 2rem;
+  font-weight: 900;
+  color: #e50914;
+}
+
+#playButton {
+  padding: 10px 20px;
+  background-color: #e50914;
+  border: none;
+  border-radius: 5px;
+  font-weight: 700;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: fit-content;
+}
+
+#playButton:hover {
   background-color: #b81d24;
 }

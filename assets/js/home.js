@@ -21,7 +21,6 @@ const chatHistory = [];
 let currentCategory = 'all';
 let currentPeriod = 'day';
 
-// Fetch trending movies
 document.querySelectorAll('nav li[data-category]').forEach(btn => {
   btn.addEventListener('click', () => {
     currentCategory = btn.getAttribute('data-category');
@@ -37,10 +36,9 @@ document.getElementById('period').addEventListener('change', e => {
 document.getElementById('logout').addEventListener('click', () => {
   localStorage.removeItem('currentUser');
   alert('Logged out!');
-  window.location.href = '/index.html'; 
+  window.location.href = '/index.html';
 });
 
-// Close modal
 closeDetail.addEventListener('click', () => {
   detailModal.classList.add('hidden');
   detailContent.innerHTML = '';
@@ -53,7 +51,6 @@ window.addEventListener('click', (e) => {
   }
 });
 
-// Open/Close chatbot
 openChatBtn.addEventListener('click', () => {
   chatbot.classList.add('active');
   openChatBtn.style.display = 'none';
@@ -64,7 +61,6 @@ closeChat.addEventListener('click', () => {
   openChatBtn.style.display = 'flex';
 });
 
-// Chat Form Submit
 chatForm.addEventListener('submit', async e => {
   e.preventDefault();
   const userMsg = chatInput.value.trim();
@@ -86,7 +82,6 @@ function appendMessage(text, sender) {
   chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
-// Gemini API response
 async function generateResponse(userMessage) {
   chatHistory.push({
     role: "user",
@@ -122,7 +117,6 @@ async function generateResponse(userMessage) {
   }
 }
 
-// Fetch Trending from TMDB
 async function fetchTrending(category = 'all', period = 'day') {
   card.innerHTML = `<p style="color:#888; text-align:center; font-size:1.2rem;">Loading...</p>`;
 
@@ -149,7 +143,6 @@ function setUserName() {
   userName.textContent = user ? user.fullName : 'Guest';
 }
 
-// Display movies
 function displayTrending(items) {
   card.innerHTML = '';
   if (!items.length) {
@@ -158,10 +151,18 @@ function displayTrending(items) {
   }
 
   items.forEach(item => {
-    const title = item.title || item.name || 'No title';
-    const poster = item.poster_path
-      ? `https://image.tmdb.org/t/p/w300${item.poster_path}`
-      : 'https://via.placeholder.com/300x450?text=No+Image';
+    let title, poster;
+    if (item.media_type === 'person' || item.profile_path) {
+      title = item.name || 'No name';
+      poster = item.profile_path
+        ? `https://image.tmdb.org/t/p/w300${item.profile_path}`
+        : 'https://via.placeholder.com/300x450?text=No+Image';
+    } else {
+      title = item.title || item.name || 'No title';
+      poster = item.poster_path
+        ? `https://image.tmdb.org/t/p/w300${item.poster_path}`
+        : 'https://via.placeholder.com/300x450?text=No+Image';
+    }
 
     const div = document.createElement('div');
     div.classList.add('card-item');
@@ -171,7 +172,7 @@ function displayTrending(items) {
       </div>
       <div class="card__text">
         <h3 class="card__title">${title}</h3>
-        <p class="card__description">${(item.overview || '').slice(0, 100)}...</p>
+        <p class="card__description">${(item.overview || item.known_for?.map(k => k.title || k.name).join(', ') || '').slice(0, 100)}...</p>
       </div>
     `;
 
@@ -183,20 +184,28 @@ function displayTrending(items) {
   });
 }
 
-// Show movie modal
-function showDetail(item) {
-  const title = item.title || item.name || 'No title';
-  const overview = item.overview || 'No description available.';
-  const poster = item.poster_path
-    ? `https://image.tmdb.org/t/p/original${item.poster_path}`
-    : 'https://via.placeholder.com/900x600?text=No+Image';
+async function showDetail(item) {
+  let title, overview, poster;
+  if (item.media_type === 'person' || item.profile_path) {
+    title = item.name || 'No name';
+    overview = item.biography || (item.known_for?.map(k => k.title || k.name).join(', ') || 'No details available.');
+    poster = item.profile_path
+      ? `https://image.tmdb.org/t/p/original${item.profile_path}`
+      : 'https://via.placeholder.com/900x600?text=No+Image';
+  } else {
+    title = item.title || item.name || 'No title';
+    overview = item.overview || 'No description available.';
+    poster = item.poster_path
+      ? `https://image.tmdb.org/t/p/original${item.poster_path}`
+      : 'https://via.placeholder.com/900x600?text=No+Image';
+  }
 
   detailContent.innerHTML = `
     <img src="${poster}" alt="${title}" class="modal-img" />
     <h2>${title}</h2>
     <p>${overview}</p>
     <hr style="margin: 20px 0; border-color: #e50914;" />
-
+    <div id="videoTrailer" style="margin-bottom: 20px;"></div>
     <div id="commentsSection">
       <h3>Comments & Feedback</h3>
       <div id="commentsList" style="max-height: 200px; overflow-y: auto; margin-bottom: 15px; color: #ccc; border: 1px solid #444; padding: 10px; border-radius: 8px;"></div>
@@ -206,6 +215,9 @@ function showDetail(item) {
       </form>
     </div>
   `;
+
+  const videos = await fetchMovieVideos(item.id);
+  showVideo(videos);
 
   loadComments(item.id);
 
@@ -223,7 +235,31 @@ function showDetail(item) {
   detailModal.classList.remove('hidden');
 }
 
-// Comment system
+async function fetchMovieVideos(movieId) {
+  const url = `https://api.themoviedb.org/3/movie/${movieId}/videos?api_key=${apiKey}`;
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    return data.results;
+  } catch {
+    return [];
+  }
+}
+
+function showVideo(videos) {
+  const trailer = videos.find(video => video.type === 'Trailer' && video.site === 'YouTube');
+  const videoDiv = document.getElementById('videoTrailer');
+
+  if (trailer) {
+    const youtubeUrl = `https://www.youtube.com/embed/${trailer.key}`;
+    videoDiv.innerHTML = `
+      <iframe width="100%" height="315" src="${youtubeUrl}" frameborder="0" allowfullscreen></iframe>
+    `;
+  } else {
+    videoDiv.innerHTML = '<p style="color:#ccc;">No trailer available.</p>';
+  }
+}
+
 async function loadComments(movieId) {
   const commentsList = document.getElementById('commentsList');
   commentsList.innerHTML = '';
@@ -265,5 +301,27 @@ async function addComment(movieId, commentText) {
   }
 }
 
-// Initial load
 fetchTrending();
+
+const hoverPreview = document.getElementById('hoverPreview');
+const hoverTitle = document.getElementById('hoverTitle');
+const hoverImage = hoverPreview.querySelector('img');
+const playButton = document.getElementById('playButton');
+
+document.querySelectorAll('.card-item').forEach(card => {
+  card.addEventListener('mouseenter', () => {
+    const title = card.querySelector('.card__title').textContent;
+    const imgSrc = card.querySelector('img').src;
+
+    hoverTitle.textContent = title;
+    hoverImage.src = imgSrc;
+    hoverPreview.classList.remove('hidden');
+  });
+
+  card.addEventListener('mouseleave', () => {
+    hoverPreview.classList.add('hidden');
+  });
+});
+playButton.addEventListener('click', () => {
+  alert('Playing the movie! (Can be linked to video or detail page later)');
+});

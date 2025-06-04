@@ -9,28 +9,37 @@
 <body>
   <header>
     <!-- <h1>Trending Media</h1> -->
-     <nav class="">
-        <div class="logo">
-          <img src="./assets/pics/logo.png"  alt="logo">
-        </div>
-        <ul>
-            <li id="all" data-category="all">All</li>
-            <li id="movies" data-category="movie">Movies</li>
-            <li id="tv" data-category="tv">TV</li>
-            <li id="people" data-category="person">People</li>
-            <select id="period">
-              <option value="day">Day</option>
-              <option value="week">Week</option>
-            </select>
-            <li id="logout">Logout</li>
+<nav class="navbar">
+  <div class="left-side">
+    <div class="logo">
+      <img src="./assets/pics/logo.png" alt="logo" />
+    </div>
+    <ul class="nav-links">
+      <li id="all" data-category="all">All</li>
+      <li id="movies" data-category="movie">Movies</li>
+      <li id="tv" data-category="tv">TV</li>
+      <li id="people" data-category="person">People</li>
+      <li>
+        <select id="period">
+          <option value="day">Day</option>
+          <option value="week">Week</option>
+        </select>
+      </li>
+      <li>
+        <input type="text" id="searchInput" placeholder="Search..." />
+      </li>
+    </ul>
+  </div>
 
-        </ul>
-        <div class="user">
-          <p>
-            Hello, <span id="user-name"></span>
-          </p>
-        </div>
-     </nav>
+  <div class="right-side">
+    <button id="logout">Logout</button>
+  </div>
+
+  <div class="user">
+    <p>Hello, <span id="user-name"></span></p>
+  </div>
+</nav>
+
     <!-- <div class="controls">
       <button id="all" data-category="all">All</button>
       <button id="movies" data-category="movie">Movies</button>
@@ -65,6 +74,14 @@
   </div>
 
   <button id="openChatBtn" title="Open Chatbot">💬</button>
+  <div id="hoverPreview" class="hover-preview hidden">
+  <img src="" alt="Preview Image" />
+  <div class="hover-info">
+    <h2 id="hoverTitle"></h2>
+    <button id="playButton">▶ Play</button>
+  </div>
+</div>
+
 
   <script src="./assets/js/home.js"></script>
 </body>
