@@ -1,88 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Trending Media - Netflix Style</title>
-  <link rel="stylesheet" href="/assets/css/main.css" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Netflix Clone</title>
+<link rel="stylesheet" href="/assets/css/main.css" />
 </head>
 <body>
-  <header>
-    <!-- <h1>Trending Media</h1> -->
-<nav class="navbar">
-  <div class="left-side">
-    <div class="logo">
-      <img src="./assets/pics/logo.png" alt="logo" />
-    </div>
-    <ul class="nav-links">
-      <li id="all" data-category="all">All</li>
-      <li id="movies" data-category="movie">Movies</li>
-      <li id="tv" data-category="tv">TV</li>
-      <li id="people" data-category="person">People</li>
-      <li>
-        <select id="period">
-          <option value="day">Day</option>
-          <option value="week">Week</option>
-        </select>
-      </li>
-      <li>
-        <input type="text" id="searchInput" placeholder="Search..." />
-      </li>
+<header>
+  <div class="logo">Netflix</div>
+  <nav>
+    <ul>
+      <li data-category="all" class="active">All</li>
+      <li data-category="movie">Movies</li>
+      <li data-category="tv">TV Shows</li>
+      <li data-category="person">People</li>
     </ul>
-  </div>
+  </nav>
+  <select id="period">
+    <option value="day">Today</option>
+    <option value="week">This Week</option>
+  </select>
+  <div id="user-name"></div>
+  <button id="logout">Logout</button>
+</header>
 
-  <div class="right-side">
-    <button id="logout">Logout</button>
-  </div>
+<main>
+  <section class="card"></section>
+</main>
 
-  <div class="user">
-    <p>Hello, <span id="user-name"></span></p>
-  </div>
-</nav>
+<div id="hoverPreview" class="hidden">
+  <img src="" alt="Preview" />
+  <h3 id="hoverTitle"></h3>
+  <button id="playButton">▶ Play</button>
+</div>
 
-    <!-- <div class="controls">
-      <button id="all" data-category="all">All</button>
-      <button id="movies" data-category="movie">Movies</button>
-      <button id="tv" data-category="tv">TV</button>
-      <button id="people" data-category="person">People</button>
-      <select id="period">
-        <option value="day">Day</option>
-        <option value="week">Week</option>
-      </select>
-      <button id="logout">Logout</button>
-    </div> -->
-  </header>
+<div id="detailModal" class="hidden">
+  <div id="detailContent"></div>
+  <button id="closeDetail">Close</button>
+</div>
 
-  <main>
-    <div class="card"></div>
-  </main>
-  <div id="detailModal" class="modal hidden">
-    <div class="modal-container">
-      <div class="modal-content">
-      <span id="closeDetail" class="close">&times;</span>
-      <div id="detailContent"></div>
-    </div>
-    </div>
-  </div>
-  <div id="chatbot">
-    <div id="chatHeader">Chatbot <button id="closeChat">×</button></div>
-    <div id="chatMessages"></div>
-    <form id="chatForm">
-      <input type="text" id="chatInput" placeholder="Ask me anything..." autocomplete="off" />
-      <button type="submit">Send</button>
-    </form>
-  </div>
+<button id="openChatBtn">Chat</button>
 
-  <button id="openChatBtn" title="Open Chatbot">💬</button>
-  <div id="hoverPreview" class="hover-preview hidden">
-  <img src="" alt="Preview Image" />
-  <div class="hover-info">
-    <h2 id="hoverTitle"></h2>
-    <button id="playButton">▶ Play</button>
-  </div>
+<div id="chatbot">
+  <button id="closeChat">X</button>
+  <div id="chatMessages"></div>
+  <form id="chatForm">
+    <input type="text" id="chatInput" autocomplete="off" placeholder="Ask me anything..." />
+    <button type="submit">Send</button>
+  </form>
 </div>
 
 
-  <script src="./assets/js/home.js"></script>
+<script src="/assets/js/home.js"></script>
 </body>
 </html>

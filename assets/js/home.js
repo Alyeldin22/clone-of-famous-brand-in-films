@@ -20,7 +20,9 @@ const chatHistory = [];
 
 let currentCategory = 'all';
 let currentPeriod = 'day';
+let hoveredMovie = null; // لتعقب الفيلم الحالي في الـ hover
 
+// التبديل بين الفئات
 document.querySelectorAll('nav li[data-category]').forEach(btn => {
   btn.addEventListener('click', () => {
     currentCategory = btn.getAttribute('data-category');
@@ -28,22 +30,26 @@ document.querySelectorAll('nav li[data-category]').forEach(btn => {
   });
 });
 
+// تغيير الفترة الزمنية
 document.getElementById('period').addEventListener('change', e => {
   currentPeriod = e.target.value;
   fetchTrending(currentCategory, currentPeriod);
 });
 
+// تسجيل الخروج
 document.getElementById('logout').addEventListener('click', () => {
   localStorage.removeItem('currentUser');
   alert('Logged out!');
   window.location.href = '/index.html';
 });
 
+// إغلاق التفاصيل
 closeDetail.addEventListener('click', () => {
   detailModal.classList.add('hidden');
   detailContent.innerHTML = '';
 });
 
+// إغلاق المودال عند الضغط خارج المحتوى
 window.addEventListener('click', (e) => {
   if (e.target === detailModal) {
     detailModal.classList.add('hidden');
@@ -51,16 +57,17 @@ window.addEventListener('click', (e) => {
   }
 });
 
+// فتح وغلق الشات بوت
 openChatBtn.addEventListener('click', () => {
   chatbot.classList.add('active');
   openChatBtn.style.display = 'none';
 });
-
 closeChat.addEventListener('click', () => {
   chatbot.classList.remove('active');
   openChatBtn.style.display = 'flex';
 });
 
+// ارسال رسالة من المستخدم
 chatForm.addEventListener('submit', async e => {
   e.preventDefault();
   const userMsg = chatInput.value.trim();
@@ -117,6 +124,7 @@ async function generateResponse(userMessage) {
   }
 }
 
+// جلب الأفلام الشائعة
 async function fetchTrending(category = 'all', period = 'day') {
   card.innerHTML = `<p style="color:#888; text-align:center; font-size:1.2rem;">Loading...</p>`;
 
@@ -180,9 +188,41 @@ function displayTrending(items) {
       showDetail(item);
     });
 
+    div.addEventListener('mouseenter', () => {
+      hoveredMovie = { title, poster };
+      updateHoverPreview(title, poster);
+    });
+    div.addEventListener('mouseleave', () => {
+      hoveredMovie = null;
+      hideHoverPreview();
+    });
+
     card.appendChild(div);
   });
 }
+
+function updateHoverPreview(title, imgSrc) {
+  const hoverPreview = document.getElementById('hoverPreview');
+  const hoverTitle = document.getElementById('hoverTitle');
+  const hoverImage = hoverPreview.querySelector('img');
+
+  hoverTitle.textContent = title;
+  hoverImage.src = imgSrc;
+  hoverPreview.classList.remove('hidden');
+}
+
+function hideHoverPreview() {
+  const hoverPreview = document.getElementById('hoverPreview');
+  hoverPreview.classList.add('hidden');
+}
+
+document.getElementById('playButton').addEventListener('click', () => {
+  if (hoveredMovie) {
+    alert(`Playing: ${hoveredMovie.title}`);
+  } else {
+    alert('No movie selected!');
+  }
+});
 
 async function showDetail(item) {
   let title, overview, poster;
@@ -301,27 +341,5 @@ async function addComment(movieId, commentText) {
   }
 }
 
+
 fetchTrending();
-
-const hoverPreview = document.getElementById('hoverPreview');
-const hoverTitle = document.getElementById('hoverTitle');
-const hoverImage = hoverPreview.querySelector('img');
-const playButton = document.getElementById('playButton');
-
-document.querySelectorAll('.card-item').forEach(card => {
-  card.addEventListener('mouseenter', () => {
-    const title = card.querySelector('.card__title').textContent;
-    const imgSrc = card.querySelector('img').src;
-
-    hoverTitle.textContent = title;
-    hoverImage.src = imgSrc;
-    hoverPreview.classList.remove('hidden');
-  });
-
-  card.addEventListener('mouseleave', () => {
-    hoverPreview.classList.add('hidden');
-  });
-});
-playButton.addEventListener('click', () => {
-  alert('Playing the movie! (Can be linked to video or detail page later)');
-});
