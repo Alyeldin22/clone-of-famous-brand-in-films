@@ -1,0 +1,17 @@
+{
+  "name": "netflix-clone",
+  "version": "1.0.0",
+  "description": "A Netflix clone with comments functionality",
+  "main": "index.html",
+  "scripts": {
+    "start": "json-server --watch db.json --port 3000",
+    "dev": "json-server --watch db.json --port 3000 --host 0.0.0.0"
+  },
+  "dependencies": {
+    "json-server": "^0.17.4"
+  },
+  "devDependencies": {},
+  "keywords": ["netflix", "clone", "movies", "comments"],
+  "author": "",
+  "license": "MIT"
+} 

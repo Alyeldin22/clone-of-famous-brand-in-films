@@ -1,6 +1,17 @@
 const apiKey = 'bdd10d2b8f52bc0a5320d5c9d88bd1ff';
 const COMMENTS_API = 'http://localhost:3000/comments';
 
+// Check if server is running
+async function checkServerStatus() {
+  try {
+    const response = await fetch(COMMENTS_API);
+    return response.ok;
+  } catch (error) {
+    console.warn('Comments server is not running:', error);
+    return false;
+  }
+}
+
 const card = document.querySelector('.card');
 const detailModal = document.getElementById('detailModal');
 const detailContent = document.getElementById('detailContent');
@@ -259,7 +270,14 @@ async function showDetail(item) {
   const videos = await fetchMovieVideos(item.id);
   showVideo(videos);
 
-  loadComments(item.id);
+  // Check server status and load comments
+  const serverRunning = await checkServerStatus();
+  if (serverRunning) {
+    loadComments(item.id);
+  } else {
+    const commentsList = document.getElementById('commentsList');
+    commentsList.innerHTML = '<p style="color:orange;">Comments are offline. Start the server with "npm start" to enable comments.</p>';
+  }
 
   const commentForm = document.getElementById('commentForm');
   commentForm.addEventListener('submit', async (e) => {
@@ -267,6 +285,12 @@ async function showDetail(item) {
     const commentInput = document.getElementById('commentInput');
     const commentText = commentInput.value.trim();
     if (!commentText) return;
+
+    const serverRunning = await checkServerStatus();
+    if (!serverRunning) {
+      alert('Comments server is not running. Please start the server with "npm start" to add comments.');
+      return;
+    }
 
     await addComment(item.id, commentText);
     commentInput.value = '';
@@ -302,44 +326,82 @@ function showVideo(videos) {
 
 async function loadComments(movieId) {
   const commentsList = document.getElementById('commentsList');
-  commentsList.innerHTML = '';
+  commentsList.innerHTML = '<p style="color:#888;">Loading comments...</p>';
 
   try {
     const res = await fetch(`${COMMENTS_API}?movieId=${movieId}`);
+    
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+    
     const comments = await res.json();
 
     if (comments.length === 0) {
-      commentsList.innerHTML = '<p>No comments yet. Be the first to comment!</p>';
+      commentsList.innerHTML = '<p style="color:#888;">No comments yet. Be the first to comment!</p>';
       return;
     }
 
+    commentsList.innerHTML = '';
     comments.forEach(c => {
-      const p = document.createElement('p');
-      p.textContent = c.text;
-      p.style.padding = '6px 0';
-      p.style.borderBottom = '1px solid #444';
-      commentsList.appendChild(p);
+      const commentDiv = document.createElement('div');
+      commentDiv.style.padding = '8px 0';
+      commentDiv.style.borderBottom = '1px solid #444';
+      commentDiv.style.marginBottom = '8px';
+      
+      const commentText = document.createElement('p');
+      commentText.textContent = c.text;
+      commentText.style.margin = '0';
+      commentText.style.color = '#ccc';
+      
+      const timestamp = document.createElement('small');
+      timestamp.textContent = c.timestamp ? new Date(c.timestamp).toLocaleDateString() : '';
+      timestamp.style.color = '#666';
+      timestamp.style.fontSize = '0.8em';
+      
+      commentDiv.appendChild(commentText);
+      commentDiv.appendChild(timestamp);
+      commentsList.appendChild(commentDiv);
     });
-  } catch {
-    commentsList.innerHTML = '<p style="color:red;">Failed to load comments.</p>';
+  } catch (error) {
+    console.error('Error loading comments:', error);
+    commentsList.innerHTML = '<p style="color:red;">Failed to load comments. Make sure the server is running.</p>';
   }
 }
 
 async function addComment(movieId, commentText) {
   try {
-    const newComment = { movieId, text: commentText };
+    const newComment = { 
+      movieId, 
+      text: commentText,
+      timestamp: new Date().toISOString()
+    };
+    
     const res = await fetch(COMMENTS_API, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newComment),
     });
 
-    if (!res.ok) throw new Error('Failed to add comment');
-    loadComments(movieId);
-  } catch {
-    alert("Could not add comment. Try again.");
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+    
+    // Reload comments to show the new one
+    await loadComments(movieId);
+    
+    // Show success message
+    const commentInput = document.getElementById('commentInput');
+    if (commentInput) {
+      commentInput.style.borderColor = '#4CAF50';
+      setTimeout(() => {
+        commentInput.style.borderColor = '';
+      }, 2000);
+    }
+  } catch (error) {
+    console.error('Error adding comment:', error);
+    alert("Could not add comment. Make sure the server is running and try again.");
   }
 }
-
 
 fetchTrending();

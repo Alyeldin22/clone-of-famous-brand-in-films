@@ -1,17 +1,41 @@
 {
   "users": [],
-
   "comments": [
     {
       "id": 1,
       "movieId": 550,
-      "text": "Awesome movie!"
+      "text": "Awesome movie! The plot was incredible and the acting was superb.",
+      "timestamp": "2024-01-15T10:30:00Z"
     },
     {
       "id": 2,
       "movieId": 299534,
-      "text": "Loved the visuals!"
+      "text": "Loved the visuals! The cinematography was breathtaking.",
+      "timestamp": "2024-01-16T14:20:00Z"
+    },
+    {
+      "id": 3,
+      "movieId": 550,
+      "text": "One of the best movies I've ever seen. Highly recommended!",
+      "timestamp": "2024-01-17T09:15:00Z"
+    },
+    {
+      "id": 4,
+      "movieId": 299534,
+      "text": "The story was compelling and kept me on the edge of my seat.",
+      "timestamp": "2024-01-18T16:45:00Z"
+    },
+    {
+      "movieId": 1374534,
+      "text": "sdsd",
+      "timestamp": "2025-07-12T01:35:36.272Z",
+      "id": 5
+    },
+    {
+      "movieId": 1061474,
+      "text": "sd",
+      "timestamp": "2025-07-12T01:35:44.144Z",
+      "id": 6
     }
   ]
 }
-
